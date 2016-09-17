@@ -2,26 +2,13 @@
 
 namespace Middleland;
 
-use Interop\Http\Middleware\ServerMiddlewareInterface;
-use Interop\Http\Middleware\DelegateInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+use Interop\Http\Middleware\{ServerMiddlewareInterface, DelegateInterface};
 
-class ServerDispatcher extends Dispatcher implements ServerMiddlewareInterface
+class ServerDispatcher implements ServerMiddlewareInterface, DelegateInterface
 {
-    /**
-     * Dispatch the response after execute the queue.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return ResponseInterface
-     */
-    public function dispatch(ServerRequestInterface $request)
-    {
-        reset($this->queue);
-        $frame = current($this->queue);
-
-        return $frame->process($request, $this);
+    use DispatcherTrait {
+        DispatcherTrait::process as private processRequest;
     }
 
     /**
@@ -34,10 +21,8 @@ class ServerDispatcher extends Dispatcher implements ServerMiddlewareInterface
      *
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $next)
+    public function process(ServerRequestInterface $request, DelegateInterface $next): ResponseInterface
     {
-        $this->next = $next;
-
-        return $this->dispatch($request);
+        return $this->processRequest($request, $next);
     }
 }

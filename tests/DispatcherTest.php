@@ -2,7 +2,7 @@
 
 namespace Middleland\Tests;
 
-use Middleland\ClientDispatcher;
+use Middleland\Dispatcher;
 use Middleland\ServerDispatcher;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\ServerRequest;
@@ -11,7 +11,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testEndPointMiddleware()
     {
-        $dispatcher = new ClientDispatcher([
+        $dispatcher = new Dispatcher([
             new FakeEndPointMiddleware(),
         ]);
 
@@ -22,7 +22,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMiddleware()
     {
-        $dispatcher = new ClientDispatcher([
+        $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
             new FakeMiddleware(2),
             new FakeMiddleware(3),
@@ -37,13 +37,13 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testInnerClientMiddleware()
     {
-        $dispatcher = new ClientDispatcher([
+        $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
-            new ClientDispatcher([
+            new Dispatcher([
                 new FakeMiddleware(2),
                 new FakeMiddleware(3),
                 new FakeMiddleware(4),
-                new ClientDispatcher([
+                new Dispatcher([
                     new FakeMiddleware(5),
                     new FakeMiddleware(6),
                     new FakeMiddleware(7),
