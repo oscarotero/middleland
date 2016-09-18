@@ -5,15 +5,15 @@ Simple middleware dispatcher for server and client side:
 Example:
 
 ```php
-use Middleland\ClientDispatcher;
+use Middleland\Dispatcher;
 
-$dispatcher = new ClientDispatcher([
+$dispatcher = new Dispatcher([
 	new Middleware1(),
 	new Middleware2(),
 	new Middleware3(),
 
 	//You can nest middleware frames
-	new ClientDispatcher([
+	new Dispatcher([
 		new Middleware4(),
 		new Middleware5(),
 	]),
