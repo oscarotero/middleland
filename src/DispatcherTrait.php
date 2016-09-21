@@ -32,6 +32,18 @@ trait DispatcherTrait
     }
 
     /**
+     * Magic method to use the dispatcher as callable.
+     *
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     */
+    public function __invoke(RequestInterface $request): ResponseInterface
+    {
+        return $this->next($request);
+    }
+
+    /**
      * Execute the next middleware frame.
      *
      * @see DelegateInterface

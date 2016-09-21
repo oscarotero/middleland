@@ -1,6 +1,6 @@
 # Middleland\Dispatcher
 
-Simple middleware dispatcher for server and client side:
+Simple PSR-15 middleware dispatcher:
 
 Example:
 
