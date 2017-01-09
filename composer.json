@@ -24,7 +24,8 @@
     },
     "require": {
         "php": "^7.0",
-        "http-interop/http-middleware": "^0.4"
+        "http-interop/http-middleware": "^0.4",
+        "container-interop/container-interop": "^1.1"
     },
     "require-dev": {
         "zendframework/zend-diactoros": "^1.3",

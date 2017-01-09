@@ -96,4 +96,20 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals('431', (string) $response->getBody());
     }
+
+    public function testContainer()
+    {
+        $dispatcher = new Dispatcher([
+            '1',
+            '2',
+            [false, '3'],
+            [true, '4'],
+            new FakeEndPointMiddleware(),
+        ], new FakeContainer());
+
+        $response = $dispatcher->dispatch(new ServerRequest());
+
+        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertEquals('421', (string) $response->getBody());
+    }
 }

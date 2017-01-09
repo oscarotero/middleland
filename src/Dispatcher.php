@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 use LogicException;
 use Closure;
@@ -18,15 +19,21 @@ class Dispatcher implements MiddlewareInterface
     private $middleware;
 
     /**
+     * @var ContainerInterface|null
+     */
+    private $container;
+
+    /**
      * @param MiddlewareInterface[] $middleware
      */
-    public function __construct(array $middleware)
+    public function __construct(array $middleware, ContainerInterface $container = null)
     {
         if (empty($middleware)) {
             throw new LogicException('Empty middleware queue');
         }
 
         $this->middleware = $middleware;
+        $this->container = $container;
     }
 
     /**
@@ -75,12 +82,20 @@ class Dispatcher implements MiddlewareInterface
             }
         }
 
+        if (is_string($frame)) {
+            if ($this->container === null) {
+                throw new InvalidArgumentException(sprintf('No valid middleware provided (%s)', $frame));
+            }
+
+            $frame = $this->container->get($frame);
+        }
+
         if ($frame === false) {
             return $frame;
         }
 
         if ($frame instanceof Closure) {
-            return $this->createMiddleware($frame);
+            return $this->createMiddlewareFromClosure($frame);
         }
 
         if ($frame instanceof MiddlewareInterface) {
@@ -164,7 +179,7 @@ class Dispatcher implements MiddlewareInterface
      *
      * @return MiddlewareInterface
      */
-    private function createMiddleware(Closure $handler): MiddlewareInterface
+    private function createMiddlewareFromClosure(Closure $handler): MiddlewareInterface
     {
         return new class($handler) implements MiddlewareInterface {
             private $handler;

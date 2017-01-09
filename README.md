@@ -7,12 +7,18 @@
 
 Simple (but powerful) PSR-15 middleware dispatcher:
 
-Example:
+## Requirements
+
+* PHP 7
+* A [PSR-7 Message implementation](http://www.php-fig.org/psr/psr-7/), for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
+* Optionally, a [container-interop](https://github.com/container-interop/container-interop) implementation to create the middleware components on demand.
+
+## Example
 
 ```php
 use Middleland\Dispatcher;
 
-$dispatcher = new Dispatcher([
+$middleware = [
 	new Middleware1(),
 	new Middleware2(),
 	new Middleware3(),
@@ -29,6 +35,9 @@ $dispatcher = new Dispatcher([
 		return $response->withHeader('X-Foo', 'Bar');
 	},
 
+	//Or use a string to create the middleware on demand using container-interop
+	'middleware6'
+
 	//USE AN ARRAY TO ADD CONDITIONS:
 
 	//This middleware is processed only in paths starting by "/admin"
@@ -42,7 +51,9 @@ $dispatcher = new Dispatcher([
 
 	//And use several for each middleware component
 	[ENV === 'DEV', new RequestIsHttps(), new MiddlewareHttps()],
-]);
+];
+
+$dispatcher = new Dispatcher($middleware, new ContainerInterop());
 
 $response = $dispatcher->dispatch(new Request());
 ```
