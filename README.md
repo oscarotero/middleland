@@ -1,5 +1,10 @@
 # Middleland\Dispatcher
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE)
+[![Build Status][ico-travis]][link-travis]
+[![Quality Score][ico-scrutinizer]][link-scrutinizer]
+
 Simple (but powerful) PSR-15 middleware dispatcher:
 
 Example:
@@ -33,10 +38,10 @@ $dispatcher = new Dispatcher([
 	[ENV === 'DEV', new MiddlewareAdmin()],
 
 	//we can create more custom matchers
-	[new ifRequestIsHttps(), new MiddlewareHttps()]
+	[new RequestIsHttps(), new MiddlewareHttps()]
 
-	//And use several custom matchers
-	[ENV === 'DEV', new ifRequestIsHttps(), new MiddlewareHttps()],
+	//And use several for each middleware component
+	[ENV === 'DEV', new RequestIsHttps(), new MiddlewareHttps()],
 ]);
 
 $response = $dispatcher->dispatch(new Request());
@@ -50,12 +55,26 @@ Just use the `Middleland\Matchers\MatcherInterface`. Example:
 use Middleland\Matchers\MatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ifIsAjax implements MatcherInterface
+class IsAjax implements MatcherInterface
 {
     public function match(ServerRequestInterface $request): bool
     {
     	return $request->getHeaderLine('X-Requested-With') === 'xmlhttprequest';
 	}
 }
+```
 
-``
+---
+
+Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes.
+
+The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/oscarotero/dispatcher.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/middlewares/oscarotero/dispatcher.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/oscarotero/dispatcher.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/oscarotero/dispatcher
+[link-travis]: https://travis-ci.org/oscarotero/dispatcher
+[link-scrutinizer]: https://scrutinizer-ci.com/g/oscarotero/dispatcher
