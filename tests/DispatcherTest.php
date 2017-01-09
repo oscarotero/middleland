@@ -3,8 +3,7 @@
 namespace Middleland\Tests;
 
 use Middleland\Dispatcher;
-use Middleland\ServerDispatcher;
-use Zend\Diactoros\Request;
+use Middleland\Matchers;
 use Zend\Diactoros\ServerRequest;
 
 class DispatcherTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +14,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new Request());
+        $response = $dispatcher->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
     }
@@ -29,13 +28,30 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new Request());
+        $response = $dispatcher->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals('321', (string) $response->getBody());
     }
 
-    public function testInnerClientMiddleware()
+    public function testClosure()
+    {
+        $dispatcher = new Dispatcher([
+            function ($request, $next) {
+                $response = $next->process($request);
+                $response->getBody()->write('hello');
+                return $response;
+            },
+            new FakeEndPointMiddleware(),
+        ]);
+
+        $response = $dispatcher->dispatch(new ServerRequest());
+
+        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertEquals('hello', (string) $response->getBody());
+    }
+
+    public function testInnerMiddleware()
     {
         $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
@@ -53,45 +69,31 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new Request());
+        $response = $dispatcher->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals('87654321', (string) $response->getBody());
 
         //Reuse
-        $response = $dispatcher->dispatch(new Request());
+        $response = $dispatcher->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals('87654321', (string) $response->getBody());
     }
 
-    public function testInnerServerMiddleware()
+    public function testMatchers()
     {
-        $dispatcher = new ServerDispatcher([
+        $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
-            new ServerDispatcher([
-                new FakeMiddleware(2),
-                new FakeMiddleware(3),
-                new FakeMiddleware(4),
-                new ServerDispatcher([
-                    new FakeMiddleware(5),
-                    new FakeMiddleware(6),
-                    new FakeMiddleware(7),
-                ]),
-            ]),
-            new FakeMiddleware(8),
+            ['/world', false, new FakeMiddleware(2)],
+            ['/world', new FakeMiddleware(3)],
+            [new FakeMiddleware(4)],
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest());
+        $response = $dispatcher->dispatch(new ServerRequest([], [], '/world'));
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('87654321', (string) $response->getBody());
-
-        //Reuse
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('87654321', (string) $response->getBody());
+        $this->assertEquals('431', (string) $response->getBody());
     }
 }

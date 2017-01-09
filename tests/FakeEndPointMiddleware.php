@@ -2,14 +2,14 @@
 
 namespace Middleland\Tests;
 
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use Psr\Http\Message\RequestInterface;
 
 class FakeEndPointMiddleware implements MiddlewareInterface
 {
-    public function process(RequestInterface $request, DelegateInterface $next)
+    public function process(ServerRequestInterface $request, DelegateInterface $next)
     {
         return new Response();
     }
