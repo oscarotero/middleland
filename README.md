@@ -1,4 +1,4 @@
-# Middleland\Dispatcher
+# Middleland
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
@@ -70,11 +70,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes.
 
 The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/oscarotero/dispatcher.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/oscarotero/middleland.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/middlewares/oscarotero/dispatcher.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/oscarotero/dispatcher.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/middlewares/oscarotero/middleland.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/g/oscarotero/middleland.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/oscarotero/dispatcher
-[link-travis]: https://travis-ci.org/oscarotero/dispatcher
-[link-scrutinizer]: https://scrutinizer-ci.com/g/oscarotero/dispatcher
+[link-packagist]: https://packagist.org/packages/oscarotero/middleland
+[link-travis]: https://travis-ci.org/oscarotero/middleland
+[link-scrutinizer]: https://scrutinizer-ci.com/g/oscarotero/middleland
