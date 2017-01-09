@@ -18,7 +18,7 @@ class Dispatcher implements MiddlewareInterface
     private $middleware;
 
     /**
-     * @param ServerRequestInterface[] $middleware
+     * @param MiddlewareInterface[] $middleware
      */
     public function __construct(array $middleware)
     {
