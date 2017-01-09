@@ -33,11 +33,29 @@ $dispatcher = new Dispatcher([
 	[ENV === 'DEV', new MiddlewareAdmin()],
 
 	//we can create more custom matchers
-	[new RequestIsHttpsMatcher(), new MiddlewareHttps()]
+	[new ifRequestIsHttps(), new MiddlewareHttps()]
 
 	//And use several custom matchers
-	[ENV === 'DEV', new RequestIsHttpsMatcher(), new MiddlewareHttps()],
+	[ENV === 'DEV', new ifRequestIsHttps(), new MiddlewareHttps()],
 ]);
 
 $response = $dispatcher->dispatch(new Request());
 ```
+
+## How to create matchers
+
+Just use the `Middleland\Matchers\MatcherInterface`. Example:
+
+```php
+use Middleland\Matchers\MatcherInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class ifIsAjax implements MatcherInterface
+{
+    public function match(ServerRequestInterface $request): bool
+    {
+    	return $request->getHeaderLine('X-Requested-With') === 'xmlhttprequest';
+	}
+}
+
+``
