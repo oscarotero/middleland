@@ -21,8 +21,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Support for [container-interop](https://github.com/container-interop/container-interop), to create middleware components on demand
 
-First version
-
 ## 0.1.0 - 2017-01-09
 
 First version
