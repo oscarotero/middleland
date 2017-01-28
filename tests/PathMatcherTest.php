@@ -12,6 +12,9 @@ class PathMatcherTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['/hello', '/hello', true],
+            ['/hello', '/hello/', true],
+            ['/hello', '/helloworld', false],
+            ['/hello', '/hello/world', true],
             ['/hello', '/world', false],
         ];
     }

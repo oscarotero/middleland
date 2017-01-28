@@ -13,7 +13,7 @@ class Path implements MatcherInterface
      */
     public function __construct(string $path)
     {
-        $this->path = $path;
+        $this->path = rtrim($path, '/');
     }
 
     /**
@@ -21,6 +21,8 @@ class Path implements MatcherInterface
      */
     public function match(ServerRequestInterface $request): bool
     {
-        return stripos($request->getUri()->getPath(), $this->path) === 0;
+        $path = $request->getUri()->getPath();
+
+        return ($path === $this->path) || stripos($path, $this->path.'/') === 0;
     }
 }
