@@ -66,6 +66,7 @@ Name | Description | Example
 -----|-------------|--------
 `Path` | Filter requests by base path. Use exclamation mark for negative matches | `new Path('/admin')`, `new Path('!/not-admin')`
 `Pattern` | Filter requests by path pattern. Use exclamation mark for negative matches | `new Pattern('*.png')` `new Pattern('!*.jpg')`
+`Accept` | Filter requests by Accept header. Use exclamation mark for negative matches | `new Accept('text/html')` `new Accept('!image/png')`
 
 ## How to create matchers
 
