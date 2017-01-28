@@ -58,6 +58,15 @@ $dispatcher = new Dispatcher($middleware, new ContainerInterop());
 $response = $dispatcher->dispatch(new Request());
 ```
 
+## Matchers
+
+As you can see in the example above, you can use an array of "matchers" to filter the requests that receive middlewares. You can use instances of `Middleland\Matchers\MatcherInterface` or booleans, but for comodity, the string values are also used to create `Middleland\Matchers\Path` instances. The available matchers are:
+
+Name | Description | Example
+-----|-------------|--------
+`Path` | Filter requests by base path | `new Path('/admin')`
+`Pattern` | Filter requests by path pattern | `new Pattern('*.png')`
+
 ## How to create matchers
 
 Just use the `Middleland\Matchers\MatcherInterface`. Example:

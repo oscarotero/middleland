@@ -59,6 +59,10 @@ class Dispatcher implements MiddlewareInterface
     {
         $frame = current($this->middleware);
 
+        if ($frame === false) {
+            return $frame;
+        }
+
         if (is_array($frame)) {
             $conditions = $frame;
             $frame = array_pop($conditions);
@@ -72,8 +76,10 @@ class Dispatcher implements MiddlewareInterface
                     return $this->next($request);
                 }
 
-                if (!($condition instanceof Matchers\MatcherInterface)) {
+                if (is_string($condition)) {
                     $condition = new Matchers\Path($condition);
+                } elseif (!($condition instanceof Matchers\MatcherInterface)) {
+                    throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or an instance of Middleland\\Matchers\\MatcherInterface');
                 }
 
                 if (!$condition->match($request)) {
@@ -88,10 +94,6 @@ class Dispatcher implements MiddlewareInterface
             }
 
             $frame = $this->container->get($frame);
-        }
-
-        if ($frame === false) {
-            return $frame;
         }
 
         if ($frame instanceof Closure) {
