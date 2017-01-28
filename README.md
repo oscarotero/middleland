@@ -64,8 +64,8 @@ As you can see in the example above, you can use an array of "matchers" to filte
 
 Name | Description | Example
 -----|-------------|--------
-`Path` | Filter requests by base path | `new Path('/admin')`
-`Pattern` | Filter requests by path pattern | `new Pattern('*.png')`
+`Path` | Filter requests by base path. Use exclamation mark for negative matches | `new Path('/admin')`, `new Path('!/not-admin')
+`Pattern` | Filter requests by path pattern. Use exclamation mark for negative matches | `new Pattern('*.png')` `new Pattern('!*.jpg')`
 
 ## How to create matchers
 

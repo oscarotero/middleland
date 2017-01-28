@@ -21,6 +21,8 @@ class PatternMatcherTest extends \PHPUnit_Framework_TestCase
             ['/hello/*.png', '/hello/world', false],
             ['/hello/*.png', '/hello/world.png', true],
             ['*.png', '/hello/world.png', true],
+            ['!*.png', '/hello/world.jpg', true],
+            ['!*.jpg', '/hello/world.jpg', false],
         ];
     }
 
