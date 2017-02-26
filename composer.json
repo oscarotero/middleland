@@ -1,4 +1,4 @@
- {
+{
     "name": "oscarotero/middleland",
     "type": "library",
     "description": "PSR-15 middleware dispatcher",
