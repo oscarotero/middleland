@@ -31,7 +31,7 @@ $middleware = [
 
 	//Or use closures
 	function ($request, $next) {
-		$response = $next($request);
+		$response = $next->process($request);
 		return $response->withHeader('X-Foo', 'Bar');
 	},
 
