@@ -2,8 +2,8 @@
 
 namespace Middleland\Tests;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class FakeMiddleware implements MiddlewareInterface
@@ -15,9 +15,9 @@ class FakeMiddleware implements MiddlewareInterface
         $this->char = $char;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next)
     {
-        $response = $next->process($request);
+        $response = $next->handle($request);
         $response->getBody()->write($this->char);
 
         return $response;

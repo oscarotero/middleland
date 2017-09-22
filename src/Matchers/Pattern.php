@@ -28,7 +28,7 @@ class Pattern implements MatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function match(ServerRequestInterface $request): bool
+    public function __invoke(ServerRequestInterface $request): bool
     {
         return fnmatch($this->pattern, $request->getUri()->getPath(), $this->flags) === $this->result;
     }

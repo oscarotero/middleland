@@ -3,10 +3,10 @@
 namespace Middleland\Tests;
 
 use Middleland\Dispatcher;
-use Middleland\Matchers;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class DispatcherTest extends \PHPUnit_Framework_TestCase
+class DispatcherTest extends TestCase
 {
     public function testEndPointMiddleware()
     {
@@ -38,7 +38,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
     {
         $dispatcher = new Dispatcher([
             function ($request, $next) {
-                $response = $next->process($request);
+                $response = $next->handle($request);
                 $response->getBody()->write('hello');
                 return $response;
             },

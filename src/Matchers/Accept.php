@@ -25,7 +25,7 @@ class Accept implements MatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function match(ServerRequestInterface $request): bool
+    public function __invoke(ServerRequestInterface $request): bool
     {
         return is_int(stripos($request->getHeaderLine('Accept'), $this->accept)) === $this->result;
     }

@@ -2,11 +2,11 @@
 
 namespace Middleland\Tests;
 
-use Middleland\Dispatcher;
 use Middleland\Matchers\Pattern;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class PatternMatcherTest extends \PHPUnit_Framework_TestCase
+class PatternMatcherTest extends TestCase
 {
     public function pathProvider()
     {
@@ -34,6 +34,6 @@ class PatternMatcherTest extends \PHPUnit_Framework_TestCase
         $matcher = new Pattern($pattern, $flags);
         $request = new ServerRequest([], [], $path);
 
-        $this->assertSame($valid, $matcher->match($request));
+        $this->assertSame($valid, $matcher($request));
     }
 }

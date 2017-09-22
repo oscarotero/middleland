@@ -2,14 +2,14 @@
 
 namespace Middleland;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Psr\Container\ContainerInterface;
+use Closure;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use InvalidArgumentException;
 use LogicException;
-use Closure;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Dispatcher implements MiddlewareInterface
 {
@@ -78,11 +78,11 @@ class Dispatcher implements MiddlewareInterface
 
                 if (is_string($condition)) {
                     $condition = new Matchers\Path($condition);
-                } elseif (!($condition instanceof Matchers\MatcherInterface)) {
-                    throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or an instance of Middleland\\Matchers\\MatcherInterface');
+                } elseif (!is_callable($condition)) {
+                    throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
                 }
 
-                if (!$condition->match($request)) {
+                if (!$condition($request)) {
                     return $this->next($request);
                 }
             }
@@ -118,52 +118,52 @@ class Dispatcher implements MiddlewareInterface
     {
         reset($this->middleware);
 
-        return $this->get($request)->process($request, $this->createDelegate());
+        return $this->get($request)->process($request, $this->createRequestHandler());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         reset($this->middleware);
 
-        return $this->get($request)->process($request, $this->createDelegate($delegate));
+        return $this->get($request)->process($request, $this->createRequestHandler($next));
     }
 
     /**
-     * Create a delegate for the current stack
+     * Create a request handler for the current stack
      *
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $next
      *
-     * @return DelegateInterface
+     * @return RequestHandlerInterface
      */
-    private function createDelegate(DelegateInterface $delegate = null): DelegateInterface
+    private function createRequestHandler(RequestHandlerInterface $next = null): RequestHandlerInterface
     {
-        return new class($this, $delegate) implements DelegateInterface {
+        return new class($this, $next) implements RequestHandlerInterface {
             private $dispatcher;
-            private $delegate;
+            private $next;
 
             /**
-             * @param Dispatcher $dispatcher
-             * @param DelegateInterface|null $delegate
+             * @param Dispatcher                   $dispatcher
+             * @param RequestHandlerInterface|null $next
              */
-            public function __construct(Dispatcher $dispatcher, DelegateInterface $delegate = null)
+            public function __construct(Dispatcher $dispatcher, RequestHandlerInterface $next = null)
             {
                 $this->dispatcher = $dispatcher;
-                $this->delegate = $delegate;
+                $this->next = $next;
             }
 
             /**
              * {@inheritdoc}
              */
-            public function process(ServerRequestInterface $request)
+            public function handle(ServerRequestInterface $request)
             {
                 $frame = $this->dispatcher->next($request);
 
                 if ($frame === false) {
-                    if ($this->delegate !== null) {
-                        return $this->delegate->process($request);
+                    if ($this->next !== null) {
+                        return $this->next->handle($request);
                     }
 
                     throw new LogicException('Middleware queue exhausted');
@@ -197,9 +197,9 @@ class Dispatcher implements MiddlewareInterface
             /**
              * {@inheritdoc}
              */
-            public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+            public function process(ServerRequestInterface $request, RequestHandlerInterface $next)
             {
-                $response = call_user_func($this->handler, $request, $delegate);
+                $response = call_user_func($this->handler, $request, $next);
 
                 if (!($response instanceof ResponseInterface)) {
                     throw new LogicException('The middleware must return a ResponseInterface');
