@@ -46,11 +46,19 @@ $middleware = [
 	//and this is processed in DEV
 	[ENV === 'DEV', new MiddlewareAdmin()],
 
-	//we can create more custom matchers
-	[new RequestIsHttps(), new MiddlewareHttps()]
+	//we can use callables to use middlewares only in some conditions
+	[
+		function ($request) {
+			return $request->getUri()->getScheme() === 'https';
+		},
+		new MiddlewareHttps()
+	],
+
+	//or use the provided matchers
+	[new Pattern('*.png'), new MiddlewareForPngFiles()],
 
 	//And use several for each middleware component
-	[ENV === 'DEV', new RequestIsHttps(), new MiddlewareHttps()],
+	[ENV === 'DEV', new Pattern('*.png'), new MiddlewareForPngFilesInDev()],
 ];
 
 $dispatcher = new Dispatcher($middleware, new Container());
@@ -60,7 +68,7 @@ $response = $dispatcher->dispatch(new Request());
 
 ## Matchers
 
-As you can see in the example above, you can use an array of "matchers" to filter the requests that receive middlewares. You can use instances of `Middleland\Matchers\MatcherInterface` or booleans, but for comodity, the string values are also used to create `Middleland\Matchers\Path` instances. The available matchers are:
+As you can see in the example above, you can use an array of "matchers" to filter the requests that receive middlewares. You can use callables, instances of `Middleland\Matchers\MatcherInterface` or booleans, but for comodity, the string values are also used to create `Middleland\Matchers\Path` instances. The available matchers are:
 
 Name | Description | Example
 -----|-------------|--------
@@ -70,7 +78,7 @@ Name | Description | Example
 
 ## How to create matchers
 
-Just use the `Middleland\Matchers\MatcherInterface`. Example:
+Just use a callable or an instance of the `Middleland\Matchers\MatcherInterface`. Example:
 
 ```php
 use Middleland\Matchers\MatcherInterface;
@@ -78,7 +86,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class IsAjax implements MatcherInterface
 {
-    public function match(ServerRequestInterface $request): bool
+    public function __invoke(ServerRequestInterface $request): bool
     {
     	return $request->getHeaderLine('X-Requested-With') === 'xmlhttprequest';
 	}
