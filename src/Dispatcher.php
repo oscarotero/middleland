@@ -157,7 +157,7 @@ class Dispatcher implements MiddlewareInterface
             /**
              * {@inheritdoc}
              */
-            public function handle(ServerRequestInterface $request)
+            public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $frame = $this->dispatcher->next($request);
 
