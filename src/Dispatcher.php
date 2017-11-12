@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middleland;
 
@@ -11,7 +12,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Dispatcher implements MiddlewareInterface
+class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
 {
     /**
      * @var MiddlewareInterface[]
@@ -22,6 +23,11 @@ class Dispatcher implements MiddlewareInterface
      * @var ContainerInterface|null
      */
     private $container;
+
+    /**
+     * @var RequestHandlerInterface|null
+     */
+    private $next;
 
     /**
      * @param MiddlewareInterface[] $middleware
@@ -50,8 +56,6 @@ class Dispatcher implements MiddlewareInterface
 
     /**
      * Return the next available middleware frame in the middleware.
-     *
-     * @param ServerRequestInterface $request
      *
      * @return MiddlewareInterface|false
      */
@@ -97,7 +101,7 @@ class Dispatcher implements MiddlewareInterface
         }
 
         if ($frame instanceof Closure) {
-            return $this->createMiddlewareFromClosure($frame);
+            return self::createMiddlewareFromClosure($frame);
         }
 
         if ($frame instanceof MiddlewareInterface) {
@@ -109,103 +113,58 @@ class Dispatcher implements MiddlewareInterface
 
     /**
      * Dispatch the request, return a response.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return ResponseInterface
      */
     public function dispatch(ServerRequestInterface $request): ResponseInterface
     {
         reset($this->middleware);
 
-        return $this->get($request)->process($request, $this->createRequestHandler());
+        return $this->get($request)->process($request, $this);
     }
 
     /**
-     * {@inheritdoc}
+     * @see RequestHandlerInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $frame = $this->next($request);
+
+        if ($frame === false) {
+            if ($this->next !== null) {
+                return $this->next->handle($request);
+            }
+
+            throw new LogicException('Middleware queue exhausted');
+        }
+
+        return $frame->process($request, $this);
+    }
+
+    /**
+     * @see MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        reset($this->middleware);
+        $this->next = $next;
 
-        return $this->get($request)->process($request, $this->createRequestHandler($next));
-    }
-
-    /**
-     * Create a request handler for the current stack
-     *
-     * @param RequestHandlerInterface $next
-     *
-     * @return RequestHandlerInterface
-     */
-    private function createRequestHandler(RequestHandlerInterface $next = null): RequestHandlerInterface
-    {
-        return new class($this, $next) implements RequestHandlerInterface {
-            private $dispatcher;
-            private $next;
-
-            /**
-             * @param Dispatcher                   $dispatcher
-             * @param RequestHandlerInterface|null $next
-             */
-            public function __construct(Dispatcher $dispatcher, RequestHandlerInterface $next = null)
-            {
-                $this->dispatcher = $dispatcher;
-                $this->next = $next;
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function handle(ServerRequestInterface $request): ResponseInterface
-            {
-                $frame = $this->dispatcher->next($request);
-
-                if ($frame === false) {
-                    if ($this->next !== null) {
-                        return $this->next->handle($request);
-                    }
-
-                    throw new LogicException('Middleware queue exhausted');
-                }
-
-                return $frame->process($request, $this);
-            }
-        };
+        return $this->dispatch($request);
     }
 
     /**
      * Create a middleware from a closure
-     *
-     * @param Closure $handler
-     *
-     * @return MiddlewareInterface
      */
-    private function createMiddlewareFromClosure(Closure $handler): MiddlewareInterface
+    private static function createMiddlewareFromClosure(Closure $handler): MiddlewareInterface
     {
         return new class($handler) implements MiddlewareInterface {
             private $handler;
 
-            /**
-             * @param Closure $handler
-             */
             public function __construct(Closure $handler)
             {
                 $this->handler = $handler;
             }
 
-            /**
-             * {@inheritdoc}
-             */
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $next)
+            public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
             {
-                $response = call_user_func($this->handler, $request, $next);
-
-                if (!($response instanceof ResponseInterface)) {
-                    throw new LogicException('The middleware must return a ResponseInterface');
-                }
-
-                return $response;
+                return call_user_func($this->handler, $request, $next);
             }
         };
     }
