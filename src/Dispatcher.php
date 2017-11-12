@@ -71,24 +71,8 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
             $conditions = $frame;
             $frame = array_pop($conditions);
 
-            foreach ($conditions as $condition) {
-                if ($condition === true) {
-                    continue;
-                }
-
-                if ($condition === false) {
-                    return $this->next($request);
-                }
-
-                if (is_string($condition)) {
-                    $condition = new Matchers\Path($condition);
-                } elseif (!is_callable($condition)) {
-                    throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
-                }
-
-                if (!$condition($request)) {
-                    return $this->next($request);
-                }
+            if (!self::executeConditions($request, $conditions)) {
+                return $this->next($request);
             }
         }
 
@@ -167,5 +151,35 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
                 return call_user_func($this->handler, $request, $next);
             }
         };
+    }
+
+    /**
+     * Evaluate conditions
+     */
+    private static function executeConditions(ServerRequestInterface $request, array $conditions): bool
+    {
+        foreach ($conditions as $condition) {
+            if ($condition === true) {
+                continue;
+            }
+
+            if ($condition === false) {
+                return false;
+            }
+
+            if (is_string($condition)) {
+                $condition = new Matchers\Path($condition);
+            } elseif (!is_callable($condition)) {
+                throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
+            }
+
+            if ($condition($request)) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
