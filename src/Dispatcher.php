@@ -163,11 +163,9 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
                 throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
             }
 
-            if ($condition($request)) {
-                continue;
+            if (!$condition($request)) {
+                return false;
             }
-
-            return false;
         }
 
         return true;
