@@ -59,9 +59,26 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
             $conditions = $frame;
             $frame = array_pop($conditions);
 
-            if (!self::executeConditions($request, $conditions)) {
-                next($this->middleware);
-                return $this->get($request);
+            foreach ($conditions as $condition) {
+                if ($condition === true) {
+                    continue;
+                }
+
+                if ($condition === false) {
+                    next($this->middleware);
+                    return $this->get($request);
+                }
+
+                if (is_string($condition)) {
+                    $condition = new Matchers\Path($condition);
+                } elseif (!is_callable($condition)) {
+                    throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
+                }
+
+                if (!$condition($request)) {
+                    next($this->middleware);
+                    return $this->get($request);
+                }
             }
         }
 
@@ -141,33 +158,5 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
                 return call_user_func($this->handler, $request, $next);
             }
         };
-    }
-
-    /**
-     * Evaluate conditions
-     */
-    private static function executeConditions(ServerRequestInterface $request, array $conditions): bool
-    {
-        foreach ($conditions as $condition) {
-            if ($condition === true) {
-                continue;
-            }
-
-            if ($condition === false) {
-                return false;
-            }
-
-            if (is_string($condition)) {
-                $condition = new Matchers\Path($condition);
-            } elseif (!is_callable($condition)) {
-                throw new InvalidArgumentException('Invalid matcher. Must be a boolean, string or a callable');
-            }
-
-            if (!$condition($request)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
