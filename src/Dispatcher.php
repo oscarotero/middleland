@@ -43,13 +43,13 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
     }
 
     /**
-     * Return the current available middleware frame in the middleware.
+     * Return the current or next available middleware frame in the middleware.
      *
      * @return MiddlewareInterface|false
      */
-    private function get(ServerRequestInterface $request)
+    private function get(ServerRequestInterface $request, bool $next = false)
     {
-        $frame = current($this->middleware);
+        $frame = $next ? next($this->middleware) : current($this->middleware);
 
         if ($frame === false) {
             return $frame;
@@ -65,8 +65,7 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
                 }
 
                 if ($condition === false) {
-                    next($this->middleware);
-                    return $this->get($request);
+                    return $this->get($request, true);
                 }
 
                 if (is_string($condition)) {
@@ -76,8 +75,7 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
                 }
 
                 if (!$condition($request)) {
-                    next($this->middleware);
-                    return $this->get($request);
+                    return $this->get($request, true);
                 }
             }
         }
@@ -116,8 +114,7 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        next($this->middleware);
-        $frame = $this->get($request);
+        $frame = $this->get($request, true);
 
         if ($frame === false) {
             if ($this->next !== null) {
