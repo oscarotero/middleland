@@ -7,25 +7,15 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Path implements MatcherInterface
 {
-    private $path;
-    private $result = true;
+    use NegativeResultTrait;
 
-    /**
-     * @param string $path
-     */
+    private $path;
+
     public function __construct(string $path)
     {
-        if ($path[0] === '!') {
-            $this->result = false;
-            $path = substr($path, 1);
-        }
-
-        $this->path = rtrim($path, '/');
+        $this->path = rtrim($this->getValue($path), '/');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __invoke(ServerRequestInterface $request): bool
     {
         $path = $request->getUri()->getPath();
