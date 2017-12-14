@@ -43,6 +43,14 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
     }
 
     /**
+     * Magic method to execute the dispatcher as a callable
+     */
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
+    {
+        return $this->dispatch($request);
+    }
+
+    /**
      * Return the current or next available middleware frame in the middleware.
      *
      * @return MiddlewareInterface|false
