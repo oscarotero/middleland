@@ -5,16 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [UNRELEASED]
+## [0.7.1] - 2018-01-12
+
+### Added
+
+- Added more tests for 100% code coverage
+- Added php7.2 to travis
 
 ### Changed
 
 - Some internal code cleanup
-
-### Added
-
-- Added more tests
-- Added php7.2 to travis
 
 ## [0.7.0] - 2017-12-14
 
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 First version
 
-[UNRELEASED]: https://github.com/oscarotero/middleland/compare/v0.7.0...HEAD
+[0.7.1]: https://github.com/oscarotero/middleland/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/oscarotero/middleland/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/oscarotero/middleland/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/oscarotero/middleland/compare/v0.4.0...v0.5.0
