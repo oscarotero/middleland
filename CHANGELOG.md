@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Some internal code cleanup
 
+### Added
+
+- Added more tests
+- Added php7.2 to travis
+
 ## [0.7.0] - 2017-12-14
 
 ### Added
