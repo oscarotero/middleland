@@ -9,9 +9,14 @@
     convertWarningsToExceptions="true"
     processIsolation="false"
     stopOnFailure="false">
-	<testsuites>
-		<testsuite name="All tests">
-			<directory>tests</directory>
-		</testsuite>
-	</testsuites>
+    <testsuites>
+        <testsuite name="All tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
