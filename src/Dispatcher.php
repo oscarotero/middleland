@@ -57,16 +57,16 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
      */
     private function get(ServerRequestInterface $request)
     {
-        $frame = current($this->middleware);
+        $middleware = current($this->middleware);
         next($this->middleware);
 
-        if ($frame === false) {
-            return $frame;
+        if ($middleware === false) {
+            return $middleware;
         }
 
-        if (is_array($frame)) {
-            $conditions = $frame;
-            $frame = array_pop($conditions);
+        if (is_array($middleware)) {
+            $conditions = $middleware;
+            $middleware = array_pop($conditions);
 
             foreach ($conditions as $condition) {
                 if ($condition === true) {
@@ -89,23 +89,23 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
             }
         }
 
-        if (is_string($frame)) {
+        if (is_string($middleware)) {
             if ($this->container === null) {
-                throw new InvalidArgumentException(sprintf('No valid middleware provided (%s)', $frame));
+                throw new InvalidArgumentException(sprintf('No valid middleware provided (%s)', $middleware));
             }
 
-            $frame = $this->container->get($frame);
+            $middleware = $this->container->get($middleware);
         }
 
-        if ($frame instanceof Closure) {
-            return self::createMiddlewareFromClosure($frame);
+        if ($middleware instanceof Closure) {
+            return self::createMiddlewareFromClosure($middleware);
         }
 
-        if ($frame instanceof MiddlewareInterface) {
-            return $frame;
+        if ($middleware instanceof MiddlewareInterface) {
+            return $middleware;
         }
 
-        throw new InvalidArgumentException(sprintf('No valid middleware provided (%s)', is_object($frame) ? get_class($frame) : gettype($frame)));
+        throw new InvalidArgumentException(sprintf('No valid middleware provided (%s)', is_object($middleware) ? get_class($middleware) : gettype($middleware)));
     }
 
     /**
@@ -123,9 +123,9 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $frame = $this->get($request);
+        $middleware = $this->get($request);
 
-        if ($frame === false) {
+        if ($middleware === false) {
             if ($this->next !== null) {
                 return $this->next->handle($request);
             }
@@ -133,7 +133,7 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
             throw new LogicException('Middleware queue exhausted');
         }
 
-        return $frame->process($request, $this);
+        return $middleware->process($request, $this);
     }
 
     /**
