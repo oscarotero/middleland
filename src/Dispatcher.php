@@ -115,7 +115,7 @@ class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
     {
         reset($this->middleware);
 
-        return $this->get($request)->process($request, $this);
+        return $this->handle($request);
     }
 
     /**

@@ -113,4 +113,36 @@ class DispatcherTest extends TestCase
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals('421', (string) $response->getBody());
     }
+
+    public function testDispatcherReuse()
+    {
+        $dispatcher1 = new Dispatcher([
+            new FakeMiddleware(1),
+            new FakeMiddleware(2),
+            new FakeMiddleware(3),
+            new FakeEndPointMiddleware(),
+        ]);
+
+        $dispatcher2 = new Dispatcher([
+            new FakeMiddleware(4),
+            new FakeMiddleware(5),
+            new FakeMiddleware(6),
+            $dispatcher1,
+        ]);
+
+        $response = $dispatcher1->dispatch(new ServerRequest());
+
+        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertEquals('321', (string) $response->getBody());
+
+        $response = $dispatcher2->dispatch(new ServerRequest());
+
+        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertEquals('321654', (string) $response->getBody());
+
+        $response = $dispatcher1->dispatch(new ServerRequest());
+
+        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertEquals('321', (string) $response->getBody());
+    }
 }
