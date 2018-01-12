@@ -19,7 +19,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $this->assertResponse('', $dispatcher->dispatch(new ServerRequest()));
+        $this->assertResponse('', $dispatcher(new ServerRequest()));
     }
 
     public function testMiddleware()
@@ -143,6 +143,28 @@ class DispatcherTest extends TestCase
 
         $dispatcher = new Dispatcher([
             new Datetime()
+        ]);
+
+        $dispatcher->dispatch(new ServerRequest());
+    }
+
+    public function testInvalidStringMiddlewareException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $dispatcher = new Dispatcher([
+            'invalid'
+        ]);
+
+        $dispatcher->dispatch(new ServerRequest());
+    }
+
+    public function testInvalidMatcherException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $dispatcher = new Dispatcher([
+            [new Datetime(), new FakeMiddleware()]
         ]);
 
         $dispatcher->dispatch(new ServerRequest());
