@@ -5,6 +5,7 @@ namespace Middleland\Tests;
 
 use Middleland\Dispatcher;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequest;
 
 class DispatcherTest extends TestCase
@@ -15,9 +16,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
+        $this->assertResponse('', $dispatcher->dispatch(new ServerRequest()));
     }
 
     public function testMiddleware()
@@ -29,10 +28,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('321', (string) $response->getBody());
+        $this->assertResponse('321', $dispatcher->dispatch(new ServerRequest()));
     }
 
     public function testClosure()
@@ -46,10 +42,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('hello', (string) $response->getBody());
+        $this->assertResponse('hello', $dispatcher->dispatch(new ServerRequest()));
     }
 
     public function testInnerMiddleware()
@@ -70,16 +63,9 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('87654321', (string) $response->getBody());
-
+        $this->assertResponse('87654321', $dispatcher->dispatch(new ServerRequest()));
         //Reuse
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('87654321', (string) $response->getBody());
+        $this->assertResponse('87654321', $dispatcher->dispatch(new ServerRequest()));
     }
 
     public function testMatchers()
@@ -92,10 +78,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ]);
 
-        $response = $dispatcher->dispatch(new ServerRequest([], [], '/world'));
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('431', (string) $response->getBody());
+        $this->assertResponse('431', $dispatcher->dispatch(new ServerRequest([], [], '/world')));
     }
 
     public function testContainer()
@@ -108,10 +91,7 @@ class DispatcherTest extends TestCase
             new FakeEndPointMiddleware(),
         ], new FakeContainer());
 
-        $response = $dispatcher->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('421', (string) $response->getBody());
+        $this->assertResponse('421', $dispatcher->dispatch(new ServerRequest()));
     }
 
     public function testDispatcherReuse()
@@ -130,19 +110,13 @@ class DispatcherTest extends TestCase
             $dispatcher1,
         ]);
 
-        $response = $dispatcher1->dispatch(new ServerRequest());
+        $this->assertResponse('321', $dispatcher1->dispatch(new ServerRequest()));
+        $this->assertResponse('321654', $dispatcher2->dispatch(new ServerRequest()));
+        $this->assertResponse('321', $dispatcher1->dispatch(new ServerRequest()));
+    }
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('321', (string) $response->getBody());
-
-        $response = $dispatcher2->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('321654', (string) $response->getBody());
-
-        $response = $dispatcher1->dispatch(new ServerRequest());
-
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
-        $this->assertEquals('321', (string) $response->getBody());
+    private function assertResponse(string $body, ResponseInterface $response)
+    {
+        $this->assertEquals($body, (string) $response->getBody());
     }
 }
