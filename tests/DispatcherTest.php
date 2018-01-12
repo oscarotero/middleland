@@ -7,6 +7,9 @@ use Middleland\Dispatcher;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequest;
+use LogicException;
+use InvalidArgumentException;
+use Datetime;
 
 class DispatcherTest extends TestCase
 {
@@ -113,6 +116,36 @@ class DispatcherTest extends TestCase
         $this->assertResponse('321', $dispatcher1->dispatch(new ServerRequest()));
         $this->assertResponse('321654', $dispatcher2->dispatch(new ServerRequest()));
         $this->assertResponse('321', $dispatcher1->dispatch(new ServerRequest()));
+    }
+
+    public function testEmptyDispatcherException()
+    {
+        $this->expectException(LogicException::class);
+
+        $dispatcher = new Dispatcher([]);
+    }
+
+    public function testExhaustedException()
+    {
+        $this->expectException(LogicException::class);
+
+        $dispatcher = new Dispatcher([
+            new FakeMiddleware(),
+            new FakeMiddleware(),
+        ]);
+
+        $dispatcher->dispatch(new ServerRequest());
+    }
+
+    public function testInvalidMiddlewareException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $dispatcher = new Dispatcher([
+            new Datetime()
+        ]);
+
+        $dispatcher->dispatch(new ServerRequest());
     }
 
     private function assertResponse(string $body, ResponseInterface $response)
