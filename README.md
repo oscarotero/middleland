@@ -5,7 +5,7 @@
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-scrutinizer]][link-scrutinizer]
 
-Simple (but powerful) PSR-15 middleware dispatcher:
+Simple (but powerful) [PSR-15](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-15-request-handlers.md) middleware dispatcher:
 
 ## Requirements
 

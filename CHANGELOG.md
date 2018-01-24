@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0] - 2018-01-24
+
+### Changed
+
+- Updated to the final version of PSR-15 (`psr/http-server-middleware`)
+
 ## [0.7.1] - 2018-01-12
 
 ### Added
@@ -64,6 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 First version
 
+[1.0.0]: https://github.com/oscarotero/middleland/compare/v0.7.1...v1.0.0
 [0.7.1]: https://github.com/oscarotero/middleland/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/oscarotero/middleland/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/oscarotero/middleland/compare/v0.5.0...v0.6.0

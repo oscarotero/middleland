@@ -4,13 +4,13 @@ declare(strict_types = 1);
 namespace Middleland;
 
 use Closure;
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use InvalidArgumentException;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class Dispatcher implements MiddlewareInterface, RequestHandlerInterface
 {

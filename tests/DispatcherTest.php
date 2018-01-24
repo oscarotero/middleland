@@ -3,13 +3,13 @@ declare(strict_types = 1);
 
 namespace Middleland\Tests;
 
+use Datetime;
+use InvalidArgumentException;
+use LogicException;
 use Middleland\Dispatcher;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequest;
-use LogicException;
-use InvalidArgumentException;
-use Datetime;
 
 class DispatcherTest extends TestCase
 {
@@ -142,7 +142,7 @@ class DispatcherTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $dispatcher = new Dispatcher([
-            new Datetime()
+            new Datetime(),
         ]);
 
         $dispatcher->dispatch(new ServerRequest());
@@ -153,7 +153,7 @@ class DispatcherTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $dispatcher = new Dispatcher([
-            'invalid'
+            'invalid',
         ]);
 
         $dispatcher->dispatch(new ServerRequest());
@@ -164,7 +164,7 @@ class DispatcherTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $dispatcher = new Dispatcher([
-            [new Datetime(), new FakeMiddleware()]
+            [new Datetime(), new FakeMiddleware()],
         ]);
 
         $dispatcher->dispatch(new ServerRequest());
