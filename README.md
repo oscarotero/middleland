@@ -19,46 +19,53 @@ Simple (but powerful) [PSR-15](https://github.com/php-fig/fig-standards/blob/mas
 use Middleland\Dispatcher;
 
 $middleware = [
-	new Middleware1(),
-	new Middleware2(),
-	new Middleware3(),
+    new Middleware1(),
+    new Middleware2(),
+    new Middleware3(),
 
-	//You can nest middleware frames
-	new Dispatcher([
-		new Middleware4(),
-		new Middleware5(),
-	]),
+    // A dispatcher can be used to group middlewares
+    new Dispatcher([
+        new Middleware4(),
+        new Middleware5(),
+    ]),
 
-	//Or use closures
-	function ($request, $next) {
-		$response = $next->handle($request);
-		return $response->withHeader('X-Foo', 'Bar');
-	},
+    // You can use closures
+    function ($request, $next) {
+        $response = $next->handle($request);
+        return $response->withHeader('X-Foo', 'Bar');
+    },
 
-	//Or use a string to create the middleware on demand using PSR-11 container
-	'middleware6'
+    // Or use a string to create the middleware on demand using a PSR-11 container
+    'middleware6'
 
-	//USE AN ARRAY TO ADD CONDITIONS:
+    // USE AN ARRAY TO ADD CONDITIONS:
 
-	//This middleware is processed only in paths starting by "/admin"
-	['/admin', new MiddlewareAdmin()],
+    // This middleware is processed only in paths starting by "/admin"
+    ['/admin', new MiddlewareAdmin()],
 
-	//and this is processed in DEV
-	[ENV === 'DEV', new MiddlewareAdmin()],
+    // This is processed in DEV
+    [ENV === 'DEV', new MiddlewareAdmin()],
 
-	//we can use callables to use middlewares only in some conditions
-	[
-		function ($request) {
-			return $request->getUri()->getScheme() === 'https';
-		},
-		new MiddlewareHttps()
-	],
+    // Use callables to create other conditions
+    [
+        function ($request) {
+            return $request->getUri()->getScheme() === 'https';
+        },
+        new MiddlewareHttps()
+    ],
 
-	//or use the provided matchers
-	[new Pattern('*.png'), new MiddlewareForPngFiles()],
+    // There are some matchers included in this library to create conditions
+    [
+        new Pattern('*.png'),
+        new MiddlewareForPngFiles()
+    ],
 
-	//And use several for each middleware component
-	[ENV === 'DEV', new Pattern('*.png'), new MiddlewareForPngFilesInDev()],
+    //And use several for each middleware
+    [
+        ENV === 'DEV',
+        new Pattern('*.png'),
+        new MiddlewareForPngFilesInDev()
+    ],
 ];
 
 $dispatcher = new Dispatcher($middleware, new Container());
