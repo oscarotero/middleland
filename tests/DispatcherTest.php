@@ -9,7 +9,7 @@ use LogicException;
 use Middleland\Dispatcher;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequest;
 
 class DispatcherTest extends TestCase
 {

@@ -10,7 +10,7 @@ Simple (but powerful) [PSR-15](https://github.com/php-fig/fig-standards/blob/mas
 ## Requirements
 
 * PHP 7
-* A [PSR-7 Message implementation](http://www.php-fig.org/psr/psr-7/), for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
+* A [PSR-7 Message implementation](http://www.php-fig.org/psr/psr-7/), for example [laminas-diactoros](https://github.com/laminas/laminas-diactoros)
 * Optionally, a [PSR-11 container](https://github.com/php-fig/container) implementation to create the middleware components on demand.
 
 ## Example

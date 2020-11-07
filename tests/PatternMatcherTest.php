@@ -5,7 +5,7 @@ namespace Middleland\Tests;
 
 use Middleland\Matchers\Pattern;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequest;
 
 class PatternMatcherTest extends TestCase
 {
