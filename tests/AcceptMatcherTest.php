@@ -5,7 +5,7 @@ namespace Middleland\Tests;
 
 use Middleland\Matchers\Accept;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequest;
 
 class AcceptMatcherTest extends TestCase
 {
