@@ -14,7 +14,7 @@ class FakeMiddleware implements MiddlewareInterface
 
     public function __construct($char = '.')
     {
-        $this->char = $char;
+        $this->char = strval($char);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
