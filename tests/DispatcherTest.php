@@ -7,13 +7,18 @@ use Datetime;
 use InvalidArgumentException;
 use LogicException;
 use Middleland\Dispatcher;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Laminas\Diactoros\ServerRequest;
 
+/**
+ * @coversClass Dispatcher
+ */
+#[CoversClass(Dispatcher::class)]
 class DispatcherTest extends TestCase
 {
-    public function testEndPointMiddleware()
+    public function testEndPointMiddleware(): void
     {
         $dispatcher = new Dispatcher([
             new FakeEndPointMiddleware(),
@@ -22,7 +27,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('', $dispatcher(new ServerRequest()));
     }
 
-    public function testMiddleware()
+    public function testMiddleware(): void
     {
         $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
@@ -34,7 +39,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('321', $dispatcher->dispatch(new ServerRequest()));
     }
 
-    public function testClosure()
+    public function testClosure(): void
     {
         $dispatcher = new Dispatcher([
             function ($request, $next) {
@@ -48,7 +53,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('hello', $dispatcher->dispatch(new ServerRequest()));
     }
 
-    public function testInnerMiddleware()
+    public function testInnerMiddleware(): void
     {
         $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
@@ -71,7 +76,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('87654321', $dispatcher->dispatch(new ServerRequest()));
     }
 
-    public function testMatchers()
+    public function testMatchers(): void
     {
         $dispatcher = new Dispatcher([
             new FakeMiddleware(1),
@@ -84,7 +89,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('431', $dispatcher->dispatch(new ServerRequest([], [], '/world')));
     }
 
-    public function testContainer()
+    public function testContainer(): void
     {
         $dispatcher = new Dispatcher([
             '1',
@@ -97,7 +102,7 @@ class DispatcherTest extends TestCase
         $this->assertResponse('421', $dispatcher->dispatch(new ServerRequest()));
     }
 
-    public function testDispatcherReuse()
+    public function testDispatcherReuse(): void
     {
         $dispatcher1 = new Dispatcher([
             new FakeMiddleware(1),
@@ -118,14 +123,14 @@ class DispatcherTest extends TestCase
         $this->assertResponse('321', $dispatcher1->dispatch(new ServerRequest()));
     }
 
-    public function testEmptyDispatcherException()
+    public function testEmptyDispatcherException(): void
     {
         $this->expectException(LogicException::class);
 
         $dispatcher = new Dispatcher([]);
     }
 
-    public function testExhaustedException()
+    public function testExhaustedException(): void
     {
         $this->expectException(LogicException::class);
 
@@ -137,7 +142,7 @@ class DispatcherTest extends TestCase
         $dispatcher->dispatch(new ServerRequest());
     }
 
-    public function testInvalidMiddlewareException()
+    public function testInvalidMiddlewareException(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -148,7 +153,7 @@ class DispatcherTest extends TestCase
         $dispatcher->dispatch(new ServerRequest());
     }
 
-    public function testInvalidStringMiddlewareException()
+    public function testInvalidStringMiddlewareException(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -159,7 +164,7 @@ class DispatcherTest extends TestCase
         $dispatcher->dispatch(new ServerRequest());
     }
 
-    public function testInvalidMatcherException()
+    public function testInvalidMatcherException(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

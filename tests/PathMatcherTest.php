@@ -4,12 +4,18 @@ declare(strict_types = 1);
 namespace Middleland\Tests;
 
 use Middleland\Matchers\Path;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Laminas\Diactoros\ServerRequest;
 
+/**
+ * @coversClass Path
+ */
+#[CoversClass(Path::class)]
 class PathMatcherTest extends TestCase
 {
-    public function pathProvider()
+    public static function pathProvider(): array
     {
         return [
             ['/hello', '/hello', true],
@@ -25,7 +31,8 @@ class PathMatcherTest extends TestCase
     /**
      * @dataProvider pathProvider
      */
-    public function testMatcher(string $pattern, string $path, bool $valid)
+    #[DataProvider('pathProvider')]
+    public function testMatcher(string $pattern, string $path, bool $valid): void
     {
         $matcher = new Path($pattern);
         $request = new ServerRequest([], [], $path);

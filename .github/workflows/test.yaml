@@ -1,41 +1,29 @@
 name: "testing"
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
-    tests:
-        name: Tests
-        runs-on: ubuntu-latest
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    name: Testing PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
 
-        strategy:
-            matrix:
-              php:
-                - 7.0
-                - 7.1
-                - 7.2
-                - 7.3
-                - 7.4
-              composer-args: [ "" ]
-              include:
-                - php: 8.0
-                  composer-args: --ignore-platform-reqs
-            fail-fast: false
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-latest']
+        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+      fail-fast: false
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
+    steps:
+      - uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-version }}
+          ini-file: 'development'
+          coverage: xdebug
 
-            - name: Install PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php }}
+      - uses: actions/checkout@v4
 
-            - name: Install dependencies
-              run: composer install --prefer-dist --no-progress --no-suggest ${{ matrix.composer-args }}
+      - run: composer validate
 
-            - name: Tests
-              run: composer test-coverage
+      - run: composer install --no-progress
+
+      - run: composer test-coverage
