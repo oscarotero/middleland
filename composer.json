@@ -23,7 +23,7 @@
         "issues": "https://github.com/oscarotero/dispatcher/issues"
     },
     "require": {
-        "php": "7.1 - 8.4",
+        "php": "^7.1|^8.0",
         "psr/http-server-middleware": "^1.0",
         "psr/container": "^1.0"
     },
