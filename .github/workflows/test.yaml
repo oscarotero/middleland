@@ -3,14 +3,13 @@ name: "testing"
 on: [push, pull_request]
 
 jobs:
-  run:
-    runs-on: ${{ matrix.operating-system }}
-    name: Testing PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        operating-system: ['ubuntu-latest']
-        php-version:
+        php:
           - 7.1
           - 7.2
           - 7.3
@@ -25,9 +24,7 @@ jobs:
     steps:
       - uses: shivammathur/setup-php@master
         with:
-          php-version: ${{ matrix.php-version }}
-          ini-file: 'development'
-          coverage: xdebug
+          php-version: ${{ matrix.php }}
 
       - uses: actions/checkout@v4
 

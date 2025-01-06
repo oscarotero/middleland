@@ -3,13 +3,17 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
 
-Simple (but powerful) [PSR-15](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-15-request-handlers.md) middleware dispatcher:
+Simple (but powerful)
+[PSR-15](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-15-request-handlers.md)
+middleware dispatcher:
 
 ## Requirements
 
-* PHP 7
-* A [PSR-7 Message implementation](http://www.php-fig.org/psr/psr-7/), for example [laminas-diactoros](https://github.com/laminas/laminas-diactoros)
-* Optionally, a [PSR-11 container](https://github.com/php-fig/container) implementation to create the middleware components on demand.
+- PHP 7
+- A [PSR-7 Message implementation](http://www.php-fig.org/psr/psr-7/), for
+  example [laminas-diactoros](https://github.com/laminas/laminas-diactoros)
+- Optionally, a [PSR-11 container](https://github.com/php-fig/container)
+  implementation to create the middleware components on demand.
 
 ## Example
 
@@ -73,17 +77,22 @@ $response = $dispatcher->dispatch(new Request());
 
 ## Matchers
 
-As you can see in the example above, you can use an array of "matchers" to filter the requests that receive middlewares. You can use callables, instances of `Middleland\Matchers\MatcherInterface` or booleans, but for comodity, the string values are also used to create `Middleland\Matchers\Path` instances. The available matchers are:
+As you can see in the example above, you can use an array of "matchers" to
+filter the requests that receive middlewares. You can use callables, instances
+of `Middleland\Matchers\MatcherInterface` or booleans, but for comodity, the
+string values are also used to create `Middleland\Matchers\Path` instances. The
+available matchers are:
 
-Name | Description | Example
------|-------------|--------
-`Path` | Filter requests by base path. Use exclamation mark for negative matches | `new Path('/admin')`, `new Path('!/not-admin')`
-`Pattern` | Filter requests by path pattern. Use exclamation mark for negative matches | `new Pattern('*.png')` `new Pattern('!*.jpg')`
-`Accept` | Filter requests by Accept header. Use exclamation mark for negative matches | `new Accept('text/html')` `new Accept('!image/png')`
+| Name      | Description                                                                 | Example                                              |
+| --------- | --------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `Path`    | Filter requests by base path. Use exclamation mark for negative matches     | `new Path('/admin')`, `new Path('!/not-admin')`      |
+| `Pattern` | Filter requests by path pattern. Use exclamation mark for negative matches  | `new Pattern('*.png')` `new Pattern('!*.jpg')`       |
+| `Accept`  | Filter requests by Accept header. Use exclamation mark for negative matches | `new Accept('text/html')` `new Accept('!image/png')` |
 
 ## How to create matchers
 
-Just use a callable or an instance of the `Middleland\Matchers\MatcherInterface`. Example:
+Just use a callable or an instance of the
+`Middleland\Matchers\MatcherInterface`. Example:
 
 ```php
 use Middleland\Matchers\MatcherInterface;
