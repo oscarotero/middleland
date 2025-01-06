@@ -1,9 +1,12 @@
 # Change Log
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.0.2] - Unreleased
+### Fixed
+- Support for PHP 8.4 [#11], [#12].
 
 ## [1.0.1] - 2020-12-06
 ### Fixed
@@ -53,12 +56,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Support for [container-interop](https://github.com/container-interop/container-interop), to create middleware components on demand
 
-## 0.1.0 - 2017-01-09
+## [0.1.0] - 2017-01-09
 First version
 
 [#6]: https://github.com/oscarotero/middleland/issues/6
 [#9]: https://github.com/oscarotero/middleland/issues/9
+[#11]: https://github.com/oscarotero/middleland/issues/11
+[#12]: https://github.com/oscarotero/middleland/issues/12
 
+[1.0.2]: https://github.com/oscarotero/middleland/compare/v1.0.1...HEAD
 [1.0.1]: https://github.com/oscarotero/middleland/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/oscarotero/middleland/compare/v0.7.1...v1.0.0
 [0.7.1]: https://github.com/oscarotero/middleland/compare/v0.7.0...v0.7.1
@@ -68,3 +74,4 @@ First version
 [0.4.0]: https://github.com/oscarotero/middleland/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/oscarotero/middleland/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/oscarotero/middleland/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/oscarotero/middleland/releases/tag/v0.1.0
