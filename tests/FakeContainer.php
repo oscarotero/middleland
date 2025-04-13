@@ -7,7 +7,7 @@ use Psr\Container\ContainerInterface;
 
 class FakeContainer implements ContainerInterface
 {
-    public function has($id)
+    public function has($id): bool
     {
         return true;
     }
